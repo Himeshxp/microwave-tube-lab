@@ -1,0 +1,1720 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#151613" />
+    <title>Microwave Tube Lab</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #151613;
+        --panel: #1e201c;
+        --panel2: #252722;
+        --line: #3b3d37;
+        --text: #f0efe8;
+        --muted: #b0b0a6;
+        --blue: #a5ada0;
+        --cyan: #79d8b5;
+        --amber: #f3bd78;
+        --red: #ef8174;
+        --green: #8dd3a4;
+        --shadow: 0 20px 60px #00000080;
+      }
+      :root[data-theme="violet"] { --cyan:#b7a3ff; --green:#b7a3ff; --blue:#b7a3ff; --amber:#f0c27a; }
+      :root[data-theme="ocean"] { --cyan:#71c7e8; --green:#78d7bd; --blue:#71c7e8; --amber:#f4bd78; }
+      :root[data-theme="ocean"] { --bg:#101922; --panel:#17232d; --panel2:#202e39; --line:#354854; --page-glow:#1b2d3a; }
+      :root[data-theme="violet"] { --bg:#191622; --panel:#211d2c; --panel2:#2b2637; --line:#494155; --page-glow:#2a2338; }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: radial-gradient(ellipse at 50% -20%, var(--page-glow,#292b25) 0, var(--bg) 58%);
+        color: var(--text);
+        font: 14px/1.55 Inter, "Segoe UI", Arial, sans-serif;
+        min-height: 100vh;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        color: inherit;
+      }
+      .shell {
+        max-width: 1400px;
+        margin: auto;
+        padding: 20px clamp(14px, 3vw, 36px) 40px;
+      }
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+      }
+      .mark {
+        width: 42px;
+        height: 42px;
+        border: 1px solid #565b51;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        color: var(--cyan);
+        background: linear-gradient(145deg, #30332b, #22241f);
+        box-shadow: 0 0 30px #77d4b51c;
+      }
+      .mark svg {
+        width: 24px;
+      }
+      .eyebrow {
+        font:
+          11px "Segoe UI Mono",
+          monospace;
+        letter-spacing: 0.16em;
+        color: var(--cyan);
+        text-transform: uppercase;
+      }
+      .brand h1 {
+        font:
+          600 20px Inter,
+          sans-serif;
+        margin: 1px 0 0;
+        letter-spacing: -0.03em;
+      }
+      .top-right {
+        font:
+          11px "DM Mono",
+          monospace;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .live-dot {
+        width: 7px;
+        height: 7px;
+        background: var(--green);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--green);
+      }
+      .intro {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 24px;
+        margin: 0 0 18px;
+      }
+      .intro h2 {
+        font:
+          600 clamp(23px, 3vw, 34px)/1.1 Inter,
+          sans-serif;
+        letter-spacing: -0.045em;
+        margin: 0 0 8px;
+      }
+      .intro p {
+        color: var(--muted);
+        max-width: 720px;
+        margin: 0;
+      }
+      .class-tag {
+        white-space: nowrap;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 12px;
+        color: #c9c9bf;
+        font:
+          11px "DM Mono",
+          monospace;
+        background: #1e201c90;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        padding-bottom: 14px;
+        overflow: auto;
+        scrollbar-width: thin;
+      }
+      .tab {
+        flex: 1;
+        min-width: 142px;
+        text-align: left;
+        background: #1c1e1a;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 11px 13px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .tab:hover {
+        border-color: #7a8175;
+        transform: translateY(-1px);
+      }
+      .tab.active {
+        background: linear-gradient(145deg, #30332c, #252721);
+        border-color: #96998d;
+        box-shadow:
+          inset 0 1px #ffffff12,
+          0 8px 24px #00000055;
+      }
+      .tab small {
+        display: block;
+        color: var(--muted);
+        font:
+          10px "DM Mono",
+          monospace;
+        margin-bottom: 3px;
+      }
+      .tab strong {
+        font:
+          600 13px Inter,
+          sans-serif;
+      }
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(330px, 0.78fr);
+        gap: 14px;
+        align-items: start;
+      }
+      .sim-column { min-width:0; }
+      .device-summary { margin-top:12px; padding:12px 16px; }
+      .device-summary b { color:var(--cyan); font-size:13px; }
+      .device-summary p { margin:4px 0 0; color:var(--muted); font-size:12px; line-height:1.5; }
+      .theme-select { border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--text); padding:6px 9px; font:12px Inter,"Segoe UI",sans-serif; }
+      .below-simulator {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+        gap: 14px;
+        margin-top: 14px;
+        align-items: start;
+      }
+      .panel {
+        background: linear-gradient(150deg, var(--panel), var(--bg));
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+      }
+      .visual-panel {
+        overflow: hidden;
+      }
+      .panel-head {
+        padding: 14px 17px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #3b3d3799;
+      }
+      .panel-title {
+        display: flex;
+        gap: 9px;
+        align-items: center;
+        font:
+          600 13px Inter,
+          sans-serif;
+      }
+      .mini-icon {
+        color: var(--cyan);
+        width: 18px;
+        height: 18px;
+      }
+      .badge {
+        border: 1px solid #51564b;
+        border-radius: 999px;
+        padding: 3px 8px;
+        color: #d2d0c4;
+        font:
+          10px "DM Mono",
+          monospace;
+      }
+      .canvas-wrap {
+        position: relative;
+        background: radial-gradient(
+          ellipse at 50% 50%,
+          #252720 0%,
+          #181916 72%
+        );
+        min-height: 350px;
+      }
+      .canvas-wrap:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.24;
+        background-image:
+          linear-gradient(#c5c8b810 1px, transparent 1px),
+          linear-gradient(90deg, #c5c8b810 1px, transparent 1px);
+        background-size: 28px 28px;
+      }
+      canvas {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 960/440;
+      }
+      .visual-foot {
+        padding: 11px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border-top: 1px solid #3b3d3799;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .legend {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .legend span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .swatch {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--amber);
+        box-shadow: 0 0 8px currentColor;
+      }
+      .swatch.wave {
+        background: var(--cyan);
+      }
+      .swatch.field {
+        background: var(--blue);
+      }
+      .transport {
+        display: flex;
+        gap: 7px;
+        align-items: center;
+      }
+      .icon-btn {
+        border: 1px solid var(--line);
+        background: #292b25;
+        border-radius: 8px;
+        padding: 5px 9px;
+        cursor: pointer;
+        font-size: 11px;
+      }
+      .icon-btn:hover {
+        border-color: #777d70;
+      }
+      .speed {
+        width: 88px;
+        accent-color: var(--cyan);
+      }
+      .rightcol {
+        display: grid;
+        gap: 14px;
+      }
+      .controls {
+        padding: 14px 16px 12px;
+      }
+      .control-actions {
+        display: grid;
+        grid-template-columns: auto minmax(120px, 1fr) auto;
+        align-items: center;
+        gap: 7px;
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .control-actions select {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 5px 7px;
+        color: var(--text);
+        background: #20221e;
+      }
+      .supply-rail {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 13px;
+        background: #191a17;
+        border-top: 1px solid #3b3d3799;
+      }
+      .supply-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 170px;
+        flex: 1;
+        padding: 5px 7px;
+        border-left: 2px solid var(--line);
+      }
+      .supply-kind {
+        flex: none;
+        min-width: 34px;
+        text-align: center;
+        border-radius: 5px;
+        padding: 2px 4px;
+        color: #151613;
+        background: var(--amber);
+        font: 10px 'DM Mono', monospace;
+      }
+      .supply-kind.rf { background: var(--cyan); }
+      .supply-kind.field { background: #b8b9ad; }
+      .supply-copy b { display: block; font-size: 11px; font-weight: 500; }
+      .supply-copy small { display: block; color: var(--muted); font-size: 10px; }
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 0 11px;
+      }
+      .section-head h3 {
+        font:
+          600 13px Inter,
+          sans-serif;
+        margin: 0;
+      }
+      .section-head small {
+        color: var(--muted);
+        font:
+          10px "DM Mono",
+          monospace;
+      }
+      .control {
+        padding: 8px 0 10px;
+        border-bottom: 1px solid #3b3d3780;
+      }
+      .control:last-child {
+        border: 0;
+        padding-bottom: 1px;
+      }
+      .control-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 6px;
+      }
+      .control label {
+        font-size: 12px;
+        color: #cbd8e5;
+      }
+      .value {
+        font:
+          11px "DM Mono",
+          monospace;
+        color: var(--cyan);
+        white-space: nowrap;
+      }
+      input[type="range"] {
+        width: 100%;
+        height: 4px;
+        accent-color: var(--cyan);
+        cursor: pointer;
+      }
+      .range-ends {
+        display: flex;
+        justify-content: space-between;
+        color: #9b9d92;
+        font:
+          9px "DM Mono",
+          monospace;
+        margin-top: 3px;
+      }
+      .param-effect { margin-top: 6px; color: #c0bfb4; font-size: 11px; line-height: 1.45; }
+      .param-effect summary { cursor:pointer; color:var(--muted); font-size:10px; }
+      .restore-btn { margin-bottom:8px; }
+      .device-summary { margin-top:14px; padding:12px 16px; }
+      .device-summary b { color:var(--cyan); font-size:13px; }
+      .device-summary p { margin:4px 0 0; color:var(--muted); font-size:12px; line-height:1.5; }
+      .effect-row + .effect-row {
+        margin-top: 2px;
+      }
+      .effect-up { color: var(--green); }
+      .effect-down { color: var(--amber); }
+      .formula {
+        padding: 14px 16px;
+      }
+      .formula-box {
+        padding: 10px 11px;
+        border-radius: 9px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        margin: 8px 0;
+      }
+      .equation {
+        font: 14px/1.55 Inter, "Segoe UI", Arial, sans-serif;
+        font-weight: 550;
+        color: var(--text);
+        overflow-wrap: anywhere;
+      }
+      .eq-label {
+        font:
+          9px "DM Mono",
+          monospace;
+        color: #a5a69a;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 3px;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+        margin-top: 10px;
+      }
+      .metric {
+        background: #252721;
+        border: 1px solid #41443a;
+        border-radius: 9px;
+        padding: 9px;
+      }
+      .metric span {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .metric b {
+        font:
+          500 14px "DM Mono",
+          monospace;
+        color: #f2f7fc;
+        display: block;
+        margin-top: 2px;
+      }
+      .concept {
+        padding: 15px 17px;
+      }
+      .concept h3 {
+        font:
+          600 13px Inter,
+          sans-serif;
+        margin: 0 0 8px;
+      }
+      .concept p {
+        color: #c8c8bd;
+        font-size: 12px;
+        margin: 0;
+      }
+      .concept .model-limit {
+        border-top: 1px solid #3b3d37;
+        margin-top: 11px;
+        padding-top: 9px;
+        color: #999b90;
+        font-size: 10px;
+      }
+      .step {
+        display: flex;
+        gap: 9px;
+        margin-top: 10px;
+        align-items: flex-start;
+      }
+      .stepnum {
+        flex: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        background: #30342b;
+        color: var(--cyan);
+        display: grid;
+        place-items: center;
+        font:
+          10px "DM Mono",
+          monospace;
+      }
+      .step p {
+        margin: 1px 0;
+      }
+      .footnote {
+        color: #999b90;
+        font-size: 10px;
+        padding: 12px 2px 0;
+      }
+      .credit { margin: 8px 2px 0; color: var(--cyan); font-size: 11px; font-weight: 600; }
+      .references { color: #999b90; font-size: 10px; margin-top: 10px; }
+      .references summary { cursor: pointer; color: #c0c1b7; }
+      .references ul { margin: 8px 0 0; padding-left: 18px; }
+      .references a { color: #79d8b5; }
+      .pill {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 2px 7px;
+        font:
+          10px "DM Mono",
+          monospace;
+        margin-top: 8px;
+      }
+      .pill.ok {
+        background: #163426;
+        color: var(--green);
+      }
+      .pill.warn {
+        background: #3a2d1c;
+        color: var(--amber);
+      }
+      .pill.stop {
+        background: #402522;
+        color: var(--red);
+      }
+      @media (min-width: 901px) {
+        .rightcol .controls { position: sticky; top: 10px; }
+      }
+      @media (max-width: 900px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+        .below-simulator {
+          grid-template-columns: 1fr;
+        }
+        .intro {
+          align-items: start;
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+      @media (max-width: 600px) {
+        .shell {
+          padding: 14px 11px 28px;
+        }
+        .top-right {
+          display: none;
+        }
+        .rightcol {
+          grid-template-columns: 1fr;
+        }
+        .below-simulator { grid-template-columns: 1fr; }
+        .control-actions { grid-template-columns: auto minmax(0, 1fr); }
+        .control-actions .icon-btn { grid-column: 1 / -1; }
+        .canvas-wrap {
+          min-height: 240px;
+        }
+        .panel-head {
+          padding: 11px 12px;
+        }
+        .visual-foot {
+          padding: 9px 11px;
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .class-tag {
+          white-space: normal;
+        }
+        .tabs .tab {
+          min-width: 145px;
+        }
+        .brand h1 {
+          font-size: 18px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="top">
+        <div class="brand">
+          <div class="mark">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path
+                d="M3 12h4m10 0h4M7 7v10m10-10v10M7 8h2m-2 8h2m6-8h2m-2 8h2M9 12h6"
+              />
+              <circle cx="12" cy="12" r="2" />
+            </svg>
+          </div>
+          <div>
+            <div class="eyebrow">Interactive teaching lab</div>
+            <h1>Microwave Tube Lab</h1>
+          </div>
+        </div>
+        <div class="top-right">
+          <span class="live-dot"></span> LIVE MODEL · CONCEPTUAL
+        </div>
+      </header>
+      <section class="intro">
+        <div>
+          <h2>See the invisible physics.</h2>
+          <p>
+            Explore how electron beams exchange energy with microwave fields.
+            Adjust a device, watch the electrons move, and connect the animation
+            to the equations.
+          </p>
+        </div>
+        <div class="class-tag">CLASSROOM MODE&nbsp; / &nbsp;SI UNITS&nbsp; <label for="themeSelect">THEME</label> <select id="themeSelect" class="theme-select" aria-label="Color theme"><option value="">Graphite</option><option value="ocean">Ocean</option><option value="violet">Violet</option></select></div>
+      </section>
+      <nav class="tabs" id="tabs" aria-label="Select microwave tube"></nav>
+      <section class="workspace">
+        <div class="sim-column">
+        <div class="panel visual-panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <svg
+                class="mini-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+              >
+                <path
+                  d="M3 12h4m10 0h4M7 6v12m10-12v12M7 8h3m-3 8h3m4-8h3m-3 8h3"
+                />
+                <circle cx="12" cy="12" r="2" /></svg
+              ><span id="viewTitle">Device animation</span>
+            </div>
+            <span class="badge" id="stateBadge">RUNNING</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas
+              id="cv"
+              width="960"
+              height="440"
+              aria-label="Animated microwave tube diagram"
+            ></canvas>
+          </div>
+          <div id="supplyRail" class="supply-rail" aria-label="Device power connections"></div>
+          <div class="visual-foot">
+            <div class="legend">
+              <span><i class="swatch"></i>Electron</span
+              ><span><i class="swatch wave"></i>RF field / wave</span
+              ><span><i class="swatch field"></i>Device structure</span>
+            </div>
+            <div class="transport">
+              <button id="play" class="icon-btn" aria-label="Pause animation">
+                Ⅱ Pause</button
+              ><button id="resetTime" class="icon-btn" aria-label="Reset animation">↺ Reset</button>
+              <button id="step" class="icon-btn" aria-label="Advance one animation step">▸ Step</button>
+              <span style="font-size: 10px">Speed</span
+              ><input
+                id="speed"
+                class="speed"
+                aria-label="Animation speed"
+                type="range"
+                min="0.25"
+                max="2"
+                step="0.25"
+                value="1"
+              /><span
+                id="speedVal"
+                style="font: 10px &quot;DM Mono&quot;; width: 27px"
+                >1×</span
+              >
+            </div>
+          </div>
+        </div>
+        <section class="panel device-summary"><b id="summaryTitle"></b><p id="summaryText"></p></section>
+        </div>
+        <aside class="rightcol">
+          <section class="panel controls">
+            <div class="section-head">
+              <h3>Adjust the device</h3>
+              <small>LIVE PARAMETERS</small>
+            </div>
+            <button id="restore" class="icon-btn restore-btn">Restore defaults</button>
+            <div id="controls"></div>
+          </section>
+        </aside>
+      </section>
+      <section class="below-simulator">
+        <section class="panel formula">
+          <div class="section-head">
+            <h3>Physics &amp; live values</h3>
+            <small id="modelBadge">MODEL</small>
+          </div>
+          <div id="equations"></div>
+          <div id="metrics" class="metrics"></div>
+        </section>
+        <section class="panel concept">
+          <h3>How it works</h3>
+          <p id="explain"></p>
+          <div id="steps"></div>
+          <p id="modelLimit" class="model-limit"></p>
+          <div id="operating"></div>
+        </section>
+      </section>
+      <p class="footnote">
+        Animation time is scaled for classroom viewing and is not real-time RF playback. Teaching models illustrate first-order behavior. Real tubes include
+        space-charge effects, cavity loading, losses, geometry and higher-order
+        interactions; see your course text for design-grade analysis.
+      </p>
+      <p class="credit"> Made by Himesh Kumar - 3rd Year ZHCET ECE Student</p>
+      <details class="references">
+        <summary>Course references for the ideal models</summary>
+        <ul>
+          <li><a href="https://courses.physics.illinois.edu/phys401/sp2020/lectures/lecture10.pdf" target="_blank" rel="noopener">University of Illinois: klystron operation and electron bunching</a></li>
+          <li><a href="https://www.aust.edu/lab_manuals/eee/EEE%204174_%20Microwave%20Engineering%20Lab.pdf" target="_blank" rel="noopener">AUST Microwave Engineering Lab: reflex klystron operation and mode timing</a></li>
+          <li><a href="https://deepblue.lib.umich.edu/bitstream/handle/2027.42/58447/jordann_1.pdf?sequence=1" target="_blank" rel="noopener">University of Michigan thesis: magnetron Hull cutoff and Buneman–Hartree synchronism</a></li>
+          <li><a href="https://library.psfc.mit.edu/catalog/reports/2010/15rr/15rr001/15rr001_full.pdf" target="_blank" rel="noopener">MIT Plasma Science and Fusion Center: Pierce gain and travelling-wave tube theory</a></li>
+        </ul>
+      </details>
+    </main>
+    <script>
+      (() => {
+        "use strict";
+        const PI = Math.PI,
+          TAU = 2 * PI,
+          E_CHARGE = 1.602176634e-19,
+          M_E = 9.1093837015e-31,
+          E_M = E_CHARGE / M_E,
+          C0 = 299792458;
+        const $ = (s) => document.querySelector(s),
+          cv = $("#cv"),
+          ctx = cv.getContext("2d");
+        const colors = {
+          bg: "#151613",
+          line: "#484a43",
+          text: "#f0efe8",
+          muted: "#b0b0a6",
+          blue: "#a5ada0",
+          cyan: "#79d8b5",
+          amber: "#f3bd78",
+          red: "#ef8174",
+          green: "#8dd3a4",
+        };
+        const fmt = (v, n = 3) =>
+          Number.isFinite(v) ? Number(v).toPrecision(n) : "—";
+        const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+        const sinc = (x) => (Math.abs(x) < 1e-8 ? 1 : Math.sin(x) / x);
+        const VIS_RF_CYCLES_PER_SEC = 2.2;
+        const hash = (n) => {
+          const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+          return x - Math.floor(x);
+        };
+        let mode = "kly",
+          time = 0,
+          last = performance.now(),
+          running = true,
+          speed = 1,
+          params = {},
+          DPR = 1,
+          lastRenderError = "";
+        function resize() {
+          DPR = Math.min(2, window.devicePixelRatio || 1);
+          const r = cv.getBoundingClientRect();
+          cv.width = Math.round(r.width * DPR);
+          cv.height = Math.round(((r.width * 440) / 960) * DPR);
+          ctx.setTransform(cv.width / 960, 0, 0, cv.height / 440, 0, 0);
+        }
+        new ResizeObserver(resize).observe(cv);
+        $("#themeSelect").onchange = (e) => { document.documentElement.dataset.theme = e.target.value; };
+        const tube = {
+          kly: {
+            name: "Two-cavity klystron",
+            summary: "This two-cavity klystron amplifier velocity-modulates electrons, bunches them in the drift space, then extracts beam energy as RF at the catcher. Klystrons are used for high-power microwave amplification, including radar and accelerator systems.",
+            short: "AMPLIFIER · VELOCITY MODULATION",
+            controls: [
+              ["V0", "Beam voltage V₀", 500, 3000, 1000, 50, "V", {up:"Raises beam speed and beam power; at fixed L and f it reduces transit angle and bunching.",down:"Lowers beam speed and transit angle rises, strengthening bunching until over-bunching becomes possible."}],
+              ["I0", "Beam current I₀", 5, 100, 30, 1, "mA", {up:"Raises available beam power and RF current. This ideal ballistic model does not include space-charge debunching.",down:"Reduces beam power and the amount of RF current available to drive the catcher cavity."}],
+              ["V1", "Buncher RF voltage V₁", 1, 100, 20, 1, "V", {up:"Increases velocity modulation and bunching parameter X. The fundamental current follows J₁(X), so very large drive can over-bunch.",down:"Weakens velocity modulation; electrons stay more evenly spaced and catcher drive falls."}],
+              ["phase", "Buncher RF phase φ₁", 0, 360, 0, 5, "°", {up:"Shifts the RF phase at which electrons enter the buncher; ideal bunching-current magnitude is unchanged but bunch timing shifts.",down:"Shifts the bunch timing relative to the RF wave; phase changes do not alter ideal current magnitude."}],
+              ["L", "Drift length L", 1, 12, 5, 0.25, "cm", {up:"Increases transit angle and lets faster electrons catch slower ones. Past the best bunching point, extra drift can over-bunch.",down:"Shortens the bunching distance, leaving less time for electron bunches to form."}],
+              ["f", "RF frequency f", 1, 6, 3, 0.1, "GHz", {up:"Increases transit angle θ₀ = 2πfL/v₀. Bunching rises and then oscillates with the Bessel response; it is not monotonic.",down:"Reduces phase advance across the drift space, usually weakening bunching at the same geometry."}],
+              ["g", "Buncher gap width d", 0.2, 2, 1, 0.1, "mm", {up:"Increases gap transit angle and lowers βᵢ = sinc(θg/2), reducing effective velocity modulation at high frequency.",down:"Shortens gap transit time so βᵢ approaches 1 and RF modulation couples more efficiently."}],
+              ["beta0", "Catcher coupling β₀", 0.1, 1, 0.7, 0.05, "", {up:"Raises the catcher RF current by β₀ and output power by β₀² in this load model.",down:"Reduces current coupled into the catcher and lowers predicted output power."}],
+              ["Rsh", "Catcher shunt resistance Rsh", 0.5, 3, 1.5, 0.1, "kΩ", {up:"Raises calculated output power in proportion to Rsh for the same fundamental current; check that it remains below beam power.",down:"Lowers output power in direct proportion to the effective catcher load resistance."}],
+            ],
+            explain:
+              "The buncher cavity changes electron speeds. Faster electrons catch slower ones in the drift space, forming bunches. At the catcher, a correctly phased field slows the bunches so their kinetic energy feeds the microwave output.",
+            limit:
+              "Model limits: ballistic, nonrelativistic beam; input-gap transit factor is included, but space charge, catcher detuning, beam spread and saturation are omitted. The displayed load power is only physical when it stays below beam power.",
+            steps: [
+              "Buncher gap: RF voltage creates velocity modulation.",
+              "Drift space: the bunches emerge from the changing arrival times.",
+              "Catcher gap: the bunched beam transfers energy to the RF field.",
+            ],
+            calc(p) {
+              const v = Math.sqrt((2 * E_CHARGE * p.V0) / M_E),
+                f = p.f * 1e9,
+                w = TAU * f,
+                L = p.L / 100,
+                theta = (w * L) / v,
+                gap = p.g / 1000,
+                thetaG = (w * gap) / v,
+                betaI = sinc(thetaG / 2),
+                a = (betaI * p.V1) / (2 * p.V0),
+                X = a * theta,
+                I2ratio = 2 * j1(X),
+                I2 = (p.I0 / 1000) * I2ratio,
+                Rsh = p.Rsh * 1000,
+                Pout = ((p.beta0 * I2) ** 2 * Rsh) / 2,
+                Pbeam = p.V0 * (p.I0 / 1000),
+                eta = Pout / Pbeam;
+              return {
+                v,
+                f,
+                w,
+                L,
+                theta,
+                gap,
+                thetaG,
+                betaI,
+                a,
+                X,
+                I2ratio,
+                I2,
+                Pout,
+                Pbeam,
+                eta,
+                Lopt: (((1.841 / a) * v) / w) * 100,
+              };
+            },
+            eq(p, m) {
+              return [
+                ["Beam speed", "v₀ = √(2eV₀/m)"],
+                ["Transit angle", "θ₀ = ωL / v₀"],
+                ["Gap transit and coupling", "θg = ωd/v₀;  βᵢ = sinc(θg/2)"],
+                ["Velocity modulation", "Δv/v₀ ≈ βᵢV₁/(2V₀)"],
+                ["Bunching parameter", "X = θ₀βᵢV₁/(2V₀)"],
+                ["Arrival phase at catcher", "ψ = ψ₀ + φ₁ + θ₀ − X sin(ψ₀ + φ₁ − θg/2)"],
+                ["Fundamental beam current", "I₂ = 2I₀J₁(X)"],
+                ["Catcher output power", "Pout = (β₀I₂)²Rsh/2"],
+              ];
+            },
+            metrics(p, m) {
+              return [
+                ["Beam speed", fmt(m.v / 1e6) + " × 10⁶ m/s"],
+                ["Transit angle", fmt(m.theta) + " rad"],
+                ["Bunching X", fmt(m.X)],
+                ["Gap coupling βᵢ", fmt(m.betaI)],
+                ["Fundamental current I₂", fmt(m.I2 * 1000) + " mA"],
+                ["Output power (selected Rsh)", fmt(m.Pout) + " W"],
+                ["Beam power V₀I₀", fmt(m.Pbeam) + " W"],
+                ["Calculated efficiency", fmt(100 * m.eta) + " %"],
+                ["Optimum L (X ≈ 1.84)", fmt(m.Lopt) + " cm"],
+              ];
+            },
+            status(p, m) {
+              if (m.eta > 0.582) return ["LOAD RESULT EXCEEDS 58.2% IDEAL LIMIT — CHECK Rsh / COUPLING", "stop"];
+              if (m.Pout > m.Pbeam) return ["CALCULATED OUTPUT EXCEEDS BEAM POWER", "stop"];
+              return [
+                "BUNCHING STRENGTH: " +
+                  (m.X < 0.3 ? "LOW" : m.X < 1.4 ? "BUILDING" : "STRONG"),
+                m.X < 0.3 ? "warn" : "ok",
+              ];
+            },
+            draw(p, m, t) {
+              const c = ctx,
+                Y = 220,
+                x0 = 48,
+                xB = 250,
+                xC = 710,
+                xEnd = 912;
+              beamTube(c, x0, xEnd, Y);
+              plate(c, xB, Y, "BUNCHER");
+              plate(c, xC, Y, "CATCHER");
+              label(c, "CATHODE", x0, Y + 61);
+              label(c, "COLLECTOR", xEnd, Y + 61);
+              label(c, "DRIFT SPACE · L", 488, Y - 78);
+              const cycles = t * VIS_RF_CYCLES_PER_SEC,
+                transitCycles = m.theta / TAU,
+                maxFlightCycles = transitCycles / Math.max(0.5, 1 - m.a),
+                upstreamCycles = 0.38,
+                collectorCycles = 0.3,
+                eventStep = clamp(0.15 - (p.I0 - 5) / 95 * 0.09, 0.055, 0.15),
+                firstEvent = Math.floor((cycles - maxFlightCycles - upstreamCycles - collectorCycles) / eventStep),
+                lastEvent = Math.floor(cycles / eventStep);
+              wave(c, xB, Y - 131, TAU * cycles + p.phase * PI / 180, 86, 5 + 28 * clamp(m.a / 0.08, 0, 1));
+              c.save();
+              const currentDrive = clamp((p.I0 * Math.abs(m.I2ratio)) / (100 * 1.16), 0, 1),
+                outputPhase = (m.I2ratio < 0 ? PI : 0) + p.phase * PI / 180;
+              c.globalAlpha = 0.15 + 0.85 * currentDrive;
+              wave(c, xC, Y - 131, TAU * cycles - m.theta + outputPhase, 86, 5 + 28 * currentDrive);
+              c.restore();
+              for (let event = firstEvent; event <= lastEvent; event++) {
+                const birthCycle = event * eventStep,
+                  age = cycles - birthCycle,
+                  phaseIn = TAU * birthCycle + p.phase * PI / 180,
+                  driftFlight = (m.theta - m.X * Math.sin(phaseIn - m.thetaG / 2)) / TAU;
+                let x;
+                if (age < upstreamCycles) {
+                  x = x0 + (age / upstreamCycles) * (xB - x0);
+                } else if (age < upstreamCycles + driftFlight) {
+                  const u = (age - upstreamCycles) / driftFlight;
+                  x = xB + u * (xC - xB);
+                } else if (age < upstreamCycles + driftFlight + collectorCycles) {
+                  const u = (age - upstreamCycles - driftFlight) / collectorCycles;
+                  x = xC + u * (xEnd - xC);
+                } else continue;
+                electron(c, x, Y + (hash(event) - 0.5) * 32, 3.2);
+              }
+              arrow(c, x0 + 120, Y + 54, x0 + 235, Y + 54, colors.cyan, 0.75);
+              arrow(c, xC + 38, Y + 54, xC + 128, Y + 54, colors.cyan, 0.75);
+              label(c, "ELECTRON BEAM →", 480, Y + 89, "#b0b0a6");
+              label(c, "RF INPUT FIELD", xB, Y - 176, "#b0b0a6");
+              label(c, "OUTPUT FIELD FROM BUNCHES", xC, Y - 176, colors.green);
+              label(c, "Increasing X tightens the bunch; maximum fundamental at X ≈ 1.84", 480, 400, colors.cyan);
+            },
+          },
+          ref: {
+            name: "Reflex klystron",
+            summary: "This reflex klystron oscillator sends electrons through one cavity gap, turns them around with a negative repeller, then uses returning bunches to sustain RF oscillation. It provides a compact microwave source for teaching and laboratory demonstrations.",
+            short: "OSCILLATOR · TRANSIT-TIME FEEDBACK",
+            controls: [
+              ["V0", "Beam voltage V₀", 150, 600, 300, 10, "V", {up:"Raises injection speed and beam power. Transit-cycle count changes with both speed and total retarding voltage, so watch N and the mode offset.",down:"Lowers injection speed and beam power; the changed transit time can move the returning bunch into or out of an oscillation mode."}],
+              ["Vr", "Repeller magnitude |Vᵣ|", 100, 900, 560, 10, "V", {up:"Strengthens the retarding field, turns electrons sooner, shortens the round trip, and shifts the mode. It can tune through discrete modes.",down:"Weakens the retarding field; electrons travel farther and take longer to return. The mode can shift either toward or away from resonance."}],
+              ["V1", "Gap RF voltage V₁", 5, 60, 25, 1, "V", {up:"Increases velocity modulation and tightens the returning bunch in this small-signal picture; large signals need a nonlinear model.",down:"Reduces velocity modulation, so returning electrons bunch less strongly."}],
+              ["I0", "Beam current I₀", 5, 100, 30, 1, "mA", {up:"Raises the returning fundamental current and available RF power; space-charge effects are not included.",down:"Reduces the current available to drive the cavity."}],
+              ["f", "Frequency f", 5, 12, 9, 0.1, "GHz", {up:"Raises the number of RF cycles during the same flight time. This moves the operating point between reflex modes.",down:"Lowers cycles per round trip and shifts the mode condition; RF frequency is also set by the cavity resonance in a real tube."}],
+              ["d", "Repeller-space length L", 1, 4, 2, 0.1, "mm", {up:"Lengthens the electron flight and increases round-trip time, adding RF cycles and changing the mode.",down:"Shortens flight time and reduces the number of RF cycles before the bunch returns."}],
+              ["g", "Cavity gap width d", 0.2, 2, 1, 0.1, "mm", {up:"Increases gap transit angle and lowers the gap coupling factor βᵢ.",down:"Shortens gap transit time so βᵢ moves closer to one."}],
+              ["Rsh", "Cavity shunt resistance Rsh", 0.5, 3, 1.5, 0.1, "kΩ", {up:"Raises calculated cavity voltage and resistive-load power for a fixed returning beam current.",down:"Lowers the cavity voltage and output power estimate."}],
+            ],
+            explain:
+              "A single resonant cavity sends electrons toward a negatively biased repeller. They turn around and cross the gap again. The round-trip time sets the oscillation mode: returning electrons must arrive in a phase that gives energy to the cavity.",
+            limit:
+              "Model limits: uniform repeller field and nonrelativistic beam. Gap coupling is included; space charge, cavity loading, nonlinear bunching and cavity-frequency pulling are not solved. The particle tracks are a 1D teaching model.",
+            steps: [
+              "First gap crossing: electrons are velocity modulated.",
+              "Repeller space: the negative field reverses their motion.",
+              "Return crossing: the bunch gives energy to the cavity in a favorable mode.",
+            ],
+            calc(p) {
+              const v = Math.sqrt((2 * E_CHARGE * p.V0) / M_E),
+                L = p.d / 1000,
+                gap = p.g / 1000,
+                f = p.f * 1e9,
+                T = (2 * M_E * L * v) / (E_CHARGE * (p.V0 + p.Vr)),
+                N = T * f,
+                n = Math.max(1, Math.round(N + 0.25)),
+                target = n - 0.25,
+                eta = N - target,
+                w = TAU * f,
+                thetaG = (w * gap) / v,
+                betaI = sinc(thetaG / 2),
+                a = (betaI * p.V1) / (2 * p.V0),
+                Xprime = (TAU * N * a),
+                I2 = 2 * (p.I0 / 1000) * j1(Xprime),
+                Rsh = p.Rsh * 1000,
+                V2 = 2 * (p.I0 / 1000) * betaI * j1(Xprime) * Rsh,
+                Pout = (V2 * V2) / (2 * Rsh),
+                efficiency = (2 * Xprime * j1(Xprime)) / (TAU * target),
+                fMode = target / T,
+                modeRepeller = [1, 2, 3].map((modeN) =>
+                  (2 * M_E * L * v * f) / (E_CHARGE * (modeN - 0.25)) - p.V0,
+                );
+              return {
+                v,
+                L,
+                gap,
+                f,
+                T,
+                N,
+                n,
+                target,
+                eta,
+                thetaG,
+                betaI,
+                a,
+                Xprime,
+                I2,
+                V2,
+                Pout,
+                efficiency,
+                fMode,
+                modes: modeRepeller,
+              };
+            },
+            eq(p, m) {
+              return [
+                [
+                  "Round-trip time",
+                  "T₀′ = 2mLv₀ / [e(Vᵣ + V₀)]",
+                ],
+                ["Mode condition", "N = fT₀′ = n − 1/4;  n = 1,2,3,…"],
+                ["Gap transit factor", "βᵢ = sinc(θg/2);  θg = ωd/v₀"],
+                ["Bunching parameter", "X′ = θ₀′βᵢV₁/(2V₀)"],
+                ["Fundamental current", "I₂ = 2I₀J₁(X′)"],
+                ["Cavity RF voltage", "V₂ = 2I₀βᵢJ₁(X′)Rsh"],
+                ["Output power (peak V₂ convention)", "Pout = V₂²/(2Rsh)"],
+                ["Mode frequency", "fₙ = (n − 1/4)/T₀′"],
+                ["Electronic efficiency (idealized)", "η = 2X′J₁(X′)/[2π(n − 1/4)]"],
+              ];
+            },
+            metrics(p, m) {
+              return [
+                ["Beam speed v₀", fmt(m.v / 1e6) + " × 10⁶ m/s"],
+                ["Round trip T₀′", fmt(m.T * 1e9) + " ns"],
+                ["RF cycles N", fmt(m.N)],
+                ["Target mode n − ¼", fmt(m.target)],
+                ["Mode offset (cycles)", fmt(m.eta)],
+                ["Gap factor βᵢ", fmt(m.betaI)],
+                ["Bunching X′", fmt(m.Xprime)],
+                ["Output frequency fₙ", fmt(m.fMode / 1e9) + " GHz"],
+                ["Output power estimate", fmt(m.Pout) + " W"],
+                ["Efficiency estimate", fmt(100 * m.efficiency) + " %"],
+                [
+                  "|Vᵣ| at modes n=1,2,3",
+                  m.modes.map((x) => fmt(x, 2)).join(" / ") + " V",
+                ],
+              ];
+            },
+            status(p, m) {
+              const good = Math.abs(m.eta) < 0.18;
+              return [
+                good ? `NEAR MODE ${m.n} − ¼ · MAXIMUM COUPLING NEAR X′ = 2.408` : "BETWEEN TRANSIT-TIME MODES",
+                good ? "ok" : "warn",
+              ];
+            },
+            draw(p, m, t) {
+              const c = ctx,
+                y = 220,
+                cathode = 100,
+                gap = 390,
+                repeller = 825,
+                pipeEnd = 825,
+                repellerGap = repeller - gap,
+                cycles = t * VIS_RF_CYCLES_PER_SEC,
+                upstreamCycles = 0.28,
+                collectorCycles = 0.28,
+                maxFlightCycles = m.N * (1 + m.a),
+                eventStep = 0.09;
+              beamTube(c, cathode, pipeEnd, y);
+              // The repeller sits on the same axis as the beam. Electrons turn
+              // around in the retarding field before they reach the plate.
+              plate(c, gap, y, "RESONANT CAVITY");
+              c.fillStyle = "#777c70";
+              c.fillRect(cathode - 7, y - 35, 14, 70);
+              c.fillStyle = colors.blue;
+              c.fillRect(repeller - 4, y - 83, 9, 166);
+              label(c, "CATHODE", cathode, y + 64);
+              label(c, "NEGATIVE REPELLER", repeller, y - 98, colors.blue);
+              const modeCoupling = Math.max(0, Math.cos(TAU * m.eta));
+              wave(c, gap, y - 111, TAU * cycles, 92, 4 + 24 * clamp(m.a / 0.08, 0, 1) * modeCoupling);
+              label(c, "RF field at cavity gap", gap, y - 150, "#b0b0a6");
+              arrow(c, repeller - 35, y - 78, gap + 42, y - 78, colors.red, 0.65);
+              label(c, "force on electron Fₑ ←", (gap + repeller) / 2, y - 91, colors.red);
+              arrow(c, gap + 42, y - 44, repeller - 35, y - 44, colors.cyan, 0.65);
+              label(c, "retarding electric field E →", (gap + repeller) / 2, y - 58, colors.cyan);
+              const turnMarkX = gap + repellerGap * (p.V0 / (p.V0 + p.Vr));
+              c.setLineDash([5, 5]);
+              c.strokeStyle = "#777c70";
+              c.beginPath();
+              c.moveTo(turnMarkX, y - 30);
+              c.lineTo(turnMarkX, y + 30);
+              c.stroke();
+              c.setLineDash([]);
+              label(c, "turning point varies with V₀ and Vᵣ", turnMarkX, y + 112, "#aaa99d");
+              const firstEvent = Math.floor((cycles - maxFlightCycles - upstreamCycles - collectorCycles) / eventStep),
+                lastEvent = Math.floor(cycles / eventStep);
+              for (let event = firstEvent; event <= lastEvent; event++) {
+                const birthCycle = event * eventStep,
+                  age = cycles - birthCycle,
+                  phaseIn = TAU * birthCycle,
+                  velocityRatio = clamp(1 - m.a * Math.sin(phaseIn - m.thetaG / 2), 0.5, 1.5),
+                  roundTripCycles = m.N * velocityRatio,
+                  turnX = gap + repellerGap * clamp((p.V0 * velocityRatio ** 2) / (p.V0 + p.Vr), 0.02, 0.99);
+                let x;
+                if (age < upstreamCycles) {
+                  x = cathode + (age / upstreamCycles) * (gap - cathode);
+                } else if (age < upstreamCycles + roundTripCycles) {
+                  const u = (age - upstreamCycles) / roundTripCycles;
+                  x = gap + 4 * u * (1 - u) * (turnX - gap);
+                } else if (age < upstreamCycles + roundTripCycles + collectorCycles) {
+                  const u = (age - upstreamCycles - roundTripCycles) / collectorCycles;
+                  x = gap - u * (gap - cathode);
+                } else continue;
+                electron(c, x, y + (hash(event) - 0.5) * 8, 3.1);
+              }
+              arrow(c, cathode + 115, y + 53, gap - 45, y + 53, colors.amber, 0.8);
+              arrow(c, turnMarkX + 35, y + 53, gap + 32, y + 53, colors.cyan, 0.8);
+              label(c, "outbound", 250, y + 79, colors.amber);
+              label(c, "return through the same gap", 540, y + 79, colors.cyan);
+              const good = Math.abs(m.eta) < 0.18;
+              label(c, `Tᵣ = ${fmt(m.T * 1e9, 2)} ns   ·   N = ${fmt(m.N, 2)} RF cycles`, 480, 380, colors.cyan);
+              label(c, good ? `MODE ${m.n} − ¼ · BUNCH RETURNS IN THE RETARDING PHASE` : `MODE OFFSET ${fmt(m.eta, 2)} CYCLES · TUNE |Vᵣ|`, 480, 409, good ? colors.green : colors.amber);
+            },
+          },
+          mag: {
+            name: "Cavity magnetron",
+            summary: "This cavity magnetron uses crossed electric and magnetic fields to form rotating electron spokes that feed energy into resonant cavities. Magnetrons are widely used as high-power microwave sources, such as in radar and microwave ovens.",
+            short: "OSCILLATOR · CROSSED-FIELD INTERACTION",
+            controls: [
+              ["B", "Axial magnetic field B", 50, 400, 200, 5, "mT", {up:"Raises B/Bc. Below cutoff electrons reach the anode; above cutoff their DC Lorentz orbit turns back toward the cathode.",down:"Lowers B/Bc and moves the orbit toward anode interception."}],
+              ["Va", "Anode voltage Vₐ", 1000, 20000, 8000, 100, "V", {up:"Raises the Hull cutoff field Bc ∝ √Va; the same B then becomes weaker relative to cutoff.",down:"Lowers Bc at fixed B, moving the orbit from anode interception toward cutoff and return."}],
+              ["f", "Cavity frequency f", 1, 10, 2.45, 0.05, "GHz", {up:"Changes the labeled resonant frequency; an actual magnetron frequency is set by cavity dimensions and operating mode.",down:"Lowers the labeled cavity frequency; this ideal orbit model does not retune cavity geometry."}],
+              ["N", "Resonant cavities N", 6, 12, 8, 2, "", {up:"Changes the π-mode pattern and spoke count N/2; adjacent cavities remain 180° apart in this mode.",down:"Reduces the cavity count and displayed number of spokes."}],
+              ["Vrf", "Cavity RF voltage Vᵣf", 0, 500, 120, 10, "Vpk", {up:"Shows a larger RF cavity field and stronger beam interaction; the displayed field is normalized because no nonlinear power balance is solved.",down:"Weakens the π-mode cavity field and the visual strength of the electron spokes."}],
+              ["rc", "Cathode radius r꜀", 2, 4, 3, 0.1, "mm", {up:"Narrows the interaction gap and changes the Hull cutoff through 1−(r꜀/rₐ)².",down:"Widens the interaction gap and shifts the ideal Hull cutoff; it also changes the real cavity geometry."}],
+              ["ra", "Anode radius rₐ", 4, 7, 5, 0.1, "mm", {up:"Widens the interaction space. The Hull cutoff voltage rises with anode radius for fixed B and cathode radius.",down:"Narrows the interaction space and lowers the ideal Hull cutoff voltage for fixed B."}],
+            ],
+            explain:
+              "The radial electric field pushes electrons outward while the axial magnetic field bends their paths. Under the right conditions, electrons form rotating spokes between cathode and anode. The spokes transfer energy to the resonant cavities.",
+            limit:
+              "Model limits: the DC orbit is numerically integrated from the nonrelativistic Lorentz force in ideal coaxial fields. RF phase focusing and spokes are qualitative overlays; space charge, end effects and cavity eigenfields are not solved.",
+            steps: [
+              "Crossed E and B fields curve electron paths around the cathode.",
+              "RF interaction groups electrons into rotating spokes.",
+              "The alternating cavity fields extract beam energy as microwave power.",
+            ],
+            calc(p) {
+              const ra = p.ra / 1000,
+                rc = p.rc / 1000,
+                B = p.B / 1000,
+                q = 1 - (rc / ra) ** 2,
+                Vc = (E_M / 8) * B * B * ra * ra * q * q,
+                Bc = Math.sqrt((8 * p.Va / E_M)) / (ra * q);
+              return { ra, rc, B, q, Vc, Bc, wc: E_M * B, orbit: traceMagnetron(p, ra, rc, B) };
+            },
+            eq(p, m) {
+              return [
+                ["Cyclotron angular frequency", "ωc = (e/m)B"],
+                ["Hull cutoff voltage", "Vᶜ ≈ (e/8m)B²rₐ²[1−(r꜀/rₐ)²]²"],
+                ["Equivalent Hull cutoff field", "Bᶜ = √(8mVₐ/e) / {rₐ[1−(r꜀/rₐ)²]}"],
+                ["π-mode neighbor phase", "Δφ = 2π(N/2)/N = π"],
+              ];
+            },
+            metrics(p, m) {
+              return [
+                ["Cyclotron frequency", fmt(m.wc / TAU / 1e9) + " GHz"],
+                ["Hull cutoff estimate", fmt(m.Vc / 1000) + " kV"],
+                ["Mode spokes", String(p.N / 2)],
+                ["Cathode / anode radius", `${fmt(m.rc * 1000, 2)} / ${fmt(m.ra * 1000, 2)} mm`],
+                ["Hull cutoff field at Vₐ", fmt(m.Bc * 1000) + " mT"],
+                ["Field ratio B/Bc", fmt(m.B / m.Bc) + "×"],
+                ["Va / Hull cutoff", fmt(p.Va / m.Vc) + "×"],
+              ];
+            },
+            status(p, m) {
+              const st = magnetronRegime(p, m);
+              return [
+                [
+                  "WEAK FIELD · ELECTRONS REACH THE ANODE",
+                  "HULL CUTOFF · ORBIT GRAZES THE ANODE",
+                  "ABOVE CUTOFF · ELECTRONS TURN BACK",
+                ][st],
+                ["stop", "ok", "warn"][st],
+              ];
+            },
+            draw(p, m, t) {
+              const c = ctx,
+                cx = 480,
+                cy = 218,
+                R = 133,
+                r = 79,
+                N = p.N,
+                st = magnetronRegime(p, m),
+                spokeMode = Math.max(2, N / 2),
+                rot = t * 0.45;
+              ctx.save();
+              ctx.translate(cx, cy);
+              // cavity anode rings and slots
+              ctx.strokeStyle = colors.blue;
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              ctx.arc(0, 0, R, 0, TAU);
+              ctx.stroke();
+              ctx.strokeStyle = "#565b50";
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.arc(0, 0, R + 36, 0, TAU);
+              ctx.stroke();
+              ctx.strokeStyle = "#a5ada0";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,R+17,0,TAU);ctx.stroke();
+              ctx.strokeStyle = "#73796d";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,R+27,0,TAU);ctx.stroke();
+              for (let i = 0; i < N; i++) {
+                const a = (TAU * i) / N;
+                ctx.save();
+                ctx.rotate(a);
+                ctx.fillStyle = i % 2 === 0 ? colors.cyan : "#666a60";
+                ctx.globalAlpha = (0.2 + 0.65 * clamp(p.Vrf / 300, 0, 1)) * (0.75 + 0.25 * Math.sin(t * 2 + i * PI));
+                ctx.fillRect(R - 8, -12, 48, 24);
+                ctx.globalAlpha = 1;
+                ctx.strokeStyle = colors.blue;
+                ctx.strokeRect(R - 8, -12, 48, 24);
+                ctx.fillStyle = colors.text;ctx.font="11px DM Mono";ctx.textAlign="center";ctx.fillText(i%2===0?"+":"−",R+16,4);
+                ctx.restore();
+              }
+              // Re-draw the paired strapping rings over the cavity blocks so
+              // the two conducting bands remain unmistakable in the diagram.
+              ctx.strokeStyle = colors.amber;
+              ctx.lineWidth = 4;
+              ctx.beginPath(); ctx.arc(0, 0, R + 17, 0, TAU); ctx.stroke();
+              ctx.strokeStyle = colors.text;
+              ctx.lineWidth = 3;
+              ctx.beginPath(); ctx.arc(0, 0, R + 29, 0, TAU); ctx.stroke();
+              ctx.fillStyle = "#a2a397";
+              ctx.beginPath();
+              ctx.arc(0, 0, r, 0, TAU);
+              ctx.fill();
+              ctx.strokeStyle = "#c6c4b9";
+              ctx.lineWidth = 2;
+              ctx.stroke();
+              ctx.fillStyle = "#1c1d19";
+              ctx.font = "11px DM Mono";
+              ctx.textAlign = "center";
+              ctx.fillText("CATHODE", 0, 4);
+              // The cathode, interaction space and anode are persistent ring
+              // outlines; electron motion follows the calculated Lorentz path.
+              ctx.setLineDash([]);
+              ctx.strokeStyle = "#d8d6ca"; ctx.lineWidth = 2;
+              ctx.beginPath(); ctx.arc(0, 0, R, 0, TAU); ctx.stroke();
+              ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.stroke();
+              // Hull trajectory is integrated from the Lorentz force in the coaxial DC fields.
+              const spokes = spokeMode;
+              if (st === 2) {
+                for (let j = 0; j < spokes; j++) {
+                  const a = (TAU * j) / spokes + rot;
+                  ctx.save();
+                  ctx.rotate(a);
+                  ctx.fillStyle = "rgba(255,189,105,.18)";
+                  ctx.beginPath();
+                  ctx.moveTo(r * Math.cos(-0.13), r * Math.sin(-0.13));
+                  ctx.arc(0, 0, r, -0.13, 0.13);
+                  ctx.lineTo(R * Math.cos(0.13), R * Math.sin(0.13));
+                  ctx.arc(0, 0, R, 0.13, -0.13, true);
+                  ctx.closePath();
+                  ctx.fill();
+                  ctx.restore();
+                }
+              }
+              // Draw the full calculated orbit and animate a continuous stream
+              // of electrons through it. Each new electron enters at the cathode.
+              const orbit=m.orbit.points, screenPoint=([px,py])=>{const rr=Math.hypot(px,py),a=Math.atan2(py,px),sr=r+clamp((rr-m.rc)/(m.ra-m.rc),0,1)*(R-r);return[sr*Math.cos(a),sr*Math.sin(a)];};
+              if(orbit.length>1){
+                ctx.strokeStyle=colors.cyan;ctx.lineWidth=2.2;ctx.beginPath();
+                orbit.forEach((pt,i)=>{const [x,y]=screenPoint(pt);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+                for(let i=0;i<7;i++){
+                  const phase=(t*0.38+i/7)%1,index=Math.min(orbit.length-1,Math.floor(phase*(orbit.length-1))),[x,y]=screenPoint(orbit[index]);
+                  electron(ctx,x,y,i===0?4.3:2.8);
+                }
+              }
+              ctx.restore();
+              label(c, "ANODE · RESONANT CAVITIES", cx, 34, colors.blue);
+              for (const a of [-Math.PI / 3, Math.PI, Math.PI / 3]) {
+                arrow(
+                  c,
+                  cx + (r + 10) * Math.cos(a),
+                  cy + (r + 10) * Math.sin(a),
+                  cx + (R - 12) * Math.cos(a),
+                  cy + (R - 12) * Math.sin(a),
+                  colors.red,
+                  0.6,
+                );
+              }
+              label(c, "E RADIAL →", cx - 198, cy - 18, colors.red);
+              label(c, "B AXIAL · INTO PAGE ⊗", cx + 195, cy - 18, colors.cyan);
+              label(c, `r꜀ = ${fmt(m.rc * 1000, 2)} mm · rₐ = ${fmt(m.ra * 1000, 2)} mm`, cx, 379, "#b0b0a6");
+              label(c, `CYAN: integrated DC Lorentz orbit · electrons continuously enter from cathode`, cx, 393, colors.amber);
+              label(
+                c,
+                ["WEAK FIELD · ANODE HIT", "HULL CUTOFF · GRAZING ORBIT", "ABOVE CUTOFF · RETURN ORBIT"][st],
+                cx,
+                412,
+                [colors.red, colors.amber, colors.green][st],
+              );
+              label(c, `π MODE · ${N} CAVITIES · ${spokes} SPOKES · STRAPPING RINGS · rotation schematic`, cx, 432, "#b0b0a6");
+            },
+          },
+          twt: {
+            name: "Travelling-wave tube",
+            summary: "This travelling-wave tube amplifier slows an RF wave along a helix so it can exchange energy continuously with the electron beam. TWTs amplify wideband microwave signals in satellite links, radar, and communications.",
+            short: "AMPLIFIER · CONTINUOUS WAVE INTERACTION",
+            controls: [
+              ["V0", "Beam voltage V₀", 500, 3000, 1500, 50, "V", {up:"Raises beam speed and the pitch required for synchronism at fixed radius. The gain estimate's Pierce parameter C falls; mismatch is not solved here.",down:"Slows the beam and lowers the matched pitch. C rises for fixed current and impedance; mismatch is not solved here."}],
+              ["I0", "Beam current I₀", 10, 200, 50, 5, "mA", {up:"Raises Pierce parameter C ∝ I₀^(1/3) and the small-signal gain estimate. Space charge and saturation eventually limit the real gain.",down:"Reduces beam-wave coupling and small-signal gain."}],
+              ["Z0", "Interaction impedance Z₀", 5, 50, 20, 1, "Ω", {up:"Raises C ∝ Z₀^(1/3), increasing predicted small-signal gain when other quantities stay fixed.",down:"Weakens the RF field seen by the beam and lowers predicted gain."}],
+              ["N", "Helix length N (λ)", 5, 50, 30, 1, "λ", {up:"Adds interaction length and increases the ideal small-signal gain estimate linearly; loss and saturation make real growth smaller.",down:"Shortens the interaction region and lowers gain."}],
+              ["Vin", "RF input voltage Vᵢₙ", 0.1, 10, 1, 0.1, "Vpk", {up:"Raises the visible input wave and strengthens the animated velocity modulation; the Pierce gain remains a small-signal gain estimate.",down:"Weakens the input RF wave and the visible bunching; gain in dB is an ideal small-signal property."}],
+              ["pitch", "Axial helix pitch p", 0.5, 5, 1.5, 0.1, "mm", {up:"Raises phase velocity for a fixed helix diameter. If vₚ moves away from the beam speed, synchronism and gain weaken.",down:"Lowers phase velocity for a fixed diameter; compare vₚ with v₀ to see whether synchronism improves."}],
+              ["diameter", "Helix diameter D", 2, 12, 6, 0.5, "mm", {up:"Lowers axial phase velocity at fixed pitch in this thin-wire helix approximation; geometry also changes interaction impedance in a real tube.",down:"Raises axial phase velocity at fixed pitch; this model holds the entered interaction impedance constant."}],
+              ["f", "RF frequency f", 1, 12, 3, 0.1, "GHz", {up:"Shortens RF wavelength at a fixed wave velocity. This model keeps Z₀ and N wavelengths fixed, so the gain equation is unchanged.",down:"Lengthens wavelength. With Z₀ and N held fixed, the simplified gain estimate is unchanged."}],
+            ],
+            explain:
+              "The helix slows the travelling RF wave until its phase velocity is close to the electron-beam velocity. The wave bunches electrons continuously; the bunches then give energy back to the growing wave along the tube.",
+            limit:
+              "Model limits: Pierce gain assumes synchronous, lossless, small-signal interaction without space charge. The animation normalizes the envelope for visibility and does not predict saturated output power.",
+            steps: [
+              "Input RF wave travels along the slow-wave helix.",
+              "Velocity modulation turns into bunching as electrons move forward.",
+              "Bunched electrons transfer kinetic energy to the wave; output grows.",
+            ],
+            calc(p) {
+              const v = Math.sqrt((2 * E_CHARGE * p.V0) / M_E),
+                C = Math.cbrt(((p.I0 / 1000) * p.Z0) / (4 * p.V0)),
+                G = -9.54 + 47.3 * C * p.N,
+                pitchMM = p.pitch,
+                diameterMM = p.diameter,
+                vp = C0 / Math.sqrt(1 + (PI * diameterMM / pitchMM) ** 2),
+                syncRatio = vp / v,
+                psi = Math.atan(pitchMM / (PI * diameterMM)),
+                wavelengthMM = (vp / (p.f * 1e9)) * 1000,
+                lengthMM = p.N * wavelengthMM,
+                helixTurns = lengthMM / pitchMM,
+                wireTurns = clamp(helixTurns, 6, 42);
+              return { v, vp, syncRatio, C, G, psi, pitchMM, diameterMM, wavelengthMM, lengthMM, helixTurns, wireTurns };
+            },
+            eq(p, m) {
+              return [
+                ["Pierce gain parameter", "C = [I₀Z₀ / (4V₀)]^(1/3)"],
+                ["Small-signal gain estimate", "G ≈ −9.54 + 47.3NC  dB"],
+                ["Beam speed", "v₀ = √(2eV₀/m)  (nonrelativistic)"],
+                ["Helix phase velocity", "vₚ ≈ c / √[1 + (πD/p)²]"],
+                ["Synchronism", "vₚ ≈ v₀; phase mismatch weakens interaction"],
+                ["RF circuit wavelength", "λ = vₚ / f"],
+              ];
+            },
+            metrics(p, m) {
+              return [
+                ["Pierce parameter C", fmt(m.C)],
+                ["Small-signal gain", fmt(m.G) + " dB"],
+                ["Beam speed", fmt(m.v / 1e6) + " × 10⁶ m/s"],
+                ["Helix phase velocity", fmt(m.vp / 1e6) + " × 10⁶ m/s"],
+                ["Phase / beam speed", fmt(m.syncRatio) + "×"],
+                ["Helix pitch angle ψ", fmt((m.psi * 180) / PI) + "°"],
+                ["Selected pitch p", fmt(m.pitchMM) + " mm"],
+                ["Selected diameter D", fmt(m.diameterMM) + " mm"],
+                ["Interaction length", fmt(m.lengthMM) + " mm"],
+                ["Estimated helix turns", fmt(m.helixTurns, 2)],
+                ["Length", String(p.N) + " wavelengths"],
+                ["Gain (linear power)", fmt(Math.pow(10, m.G / 10)) + "×"],
+              ];
+            },
+            status(p, m) {
+              return [Math.abs(m.syncRatio - 1) < 0.1 ? "NEAR SYNCHRONISM · SMALL-SIGNAL ESTIMATE" : "PHASE VELOCITY MISMATCH · WEAK INTERACTION", Math.abs(m.syncRatio - 1) < 0.1 ? "ok" : "warn"];
+            },
+            draw(p, m, t) {
+              const c = ctx,
+                x0 = 96,
+                x1 = 867,
+                y = 225,
+                L = x1 - x0,
+                cycles = t * VIS_RF_CYCLES_PER_SEC,
+                flightCycles = p.N,
+                eventStep = clamp(0.18 - (p.I0 / 200) * 0.09, 0.08, 0.18),
+                synchronismCue = clamp(1 - Math.abs(Math.log(Math.max(m.syncRatio, 1e-6))), 0, 1),
+                bunchStrength = 0.82 * (1 - Math.exp(-0.5 * m.C * p.N)) * (1 - Math.exp(-p.Vin / 2)) * synchronismCue,
+                visualGainDb = clamp(m.G * synchronismCue, -10, 80);
+              beamTube(c, x0, x1, y);
+              // Side-view helix: the oscillating wire surrounds the axial beam.
+              c.strokeStyle = colors.blue;
+              c.lineWidth = 2;
+              c.beginPath();
+              for (let x = x0; x <= x1; x += 2) {
+                const u = (x - x0) / L,
+                  phase = TAU * m.wireTurns * u;
+                x === x0
+                  ? c.moveTo(x, y + 63 * Math.sin(phase))
+                  : c.lineTo(x, y + 63 * Math.sin(phase));
+              }
+              c.stroke();
+              c.strokeStyle="#777c70";c.lineWidth=1.5;c.strokeRect(x0+106,y-77,64,154);label(c,"FOCUSING MAGNET",x0+138,y+103,"#b0b0a6");
+              c.fillStyle="rgba(243,189,120,.18)";c.fillRect(x0+390,y-70,16,140);c.strokeStyle=colors.amber;c.strokeRect(x0+390,y-70,16,140);label(c,"ATTENUATOR",x0+398,y+101,colors.amber);
+              label(c, `SLOW-WAVE HELIX · schematic wire turns`, 480, 159, colors.blue);
+              arrow(c, x0 + 5, 81, x1 - 5, 81, colors.cyan, 0.7);
+              label(c, "RF wave travels along helix →", 480, 68, colors.cyan);
+              label(c, "RF IN", x0, 108, "#b0b0a6");
+              label(c, "RF OUT", x1, 108, colors.cyan);
+              label(c, "CATHODE", x0, y + 84, "#b0b0a6");
+              label(c, "COLLECTOR", x1, y + 84, "#b0b0a6");
+              const amp = (u) => {
+                const g = Math.pow(10, visualGainDb / 20);
+                if (Math.abs(g - 1) < 1e-6) return 4;
+                const fraction = (Math.pow(g, u) - 1) / (g - 1);
+                return visualGainDb > 0 ? 4 + 34 * fraction : 4 - 3 * fraction;
+              };
+              c.strokeStyle = colors.cyan;
+              c.lineWidth = 2.2;
+              c.beginPath();
+              for (let x = x0; x <= x1; x += 2) {
+                const u = (x - x0) / L,
+                  wavePhase = TAU * p.N * u - TAU * cycles,
+                  yy = 130 - 0.65 * amp(u) * Math.sin(wavePhase);
+                x === x0 ? c.moveTo(x, yy) : c.lineTo(x, yy);
+              }
+              c.stroke();
+              const firstEvent = Math.floor((cycles - flightCycles) / eventStep),
+                lastEvent = Math.floor(cycles / eventStep);
+              for (let event = firstEvent; event <= lastEvent; event++) {
+                const birthCycle = event * eventStep,
+                  age = cycles - birthCycle;
+                if (age < 0 || age > flightCycles) continue;
+                const u = age / flightCycles,
+                  phase = TAU * birthCycle,
+                  displacement = -24 * bunchStrength * Math.sin(phase) * Math.pow(u, 1.5),
+                  x = x0 + u * L + displacement;
+                electron(c, clamp(x, x0, x1), y + (hash(event) - 0.5) * 7, 3);
+              }
+              arrow(c, x0 + 100, y + 42, x0 + 215, y + 42, colors.amber, 0.75);
+              arrow(c, x1 - 220, y + 42, x1 - 100, y + 42, colors.amber, 0.75);
+              label(c, "ELECTRON BEAM →", 480, y + 79, colors.amber);
+              label(c, "RF envelope shown normalized for visibility", 480, 348, "#aaa99d");
+              label(c, `small-signal gain: ${fmt(m.G, 3)} dB · RF input ${p.Vin} Vpk · envelope normalized`, 480, 402, "#b0b0a6");
+            },
+          },
+        };
+        function j1(x) {
+          if (Math.abs(x) > 8) {
+            const steps = 512,
+              h = PI / steps;
+            let sum = Math.cos(-x * Math.sin(0)) + Math.cos(PI - x * Math.sin(PI));
+            for (let i = 1; i < steps; i++) {
+              const t = i * h,
+                value = Math.cos(t - x * Math.sin(t));
+              sum += (i % 2 ? 4 : 2) * value;
+            }
+            return (h * sum) / (3 * PI);
+          }
+          let sum = 0,
+            term = x / 2;
+          for (let k = 0; k < 200; k++) {
+            sum += term;
+            term *= -((x * x) / 4) / ((k + 1) * (k + 2));
+            if (Math.abs(term) < 1e-14) break;
+          }
+          return sum;
+        }
+        let magnetronCacheKey = "", magnetronCache = null;
+        function traceMagnetron(p, ra, rc, B) {
+          const key=[p.Va,p.B,p.ra,p.rc].join(":");
+          if(key===magnetronCacheKey&&magnetronCache)return magnetronCache;
+          const ln=Math.log(ra/rc),dt=.025/(E_M*B),state={x:rc*(1+1e-5),y:0,vx:0,vy:0},points=[],cutoffB=Math.sqrt(8*p.Va/E_M)/(ra*(1-(rc/ra)**2)),atCutoff=Math.abs(B/cutoffB-1)<.015;let result="space-charge-free orbit",previousRadial=0,turned=false;
+          const deriv=(s)=>{const r=Math.max(Math.hypot(s.x,s.y),rc),Ex=-p.Va/(r*ln)*s.x/r,Ey=-p.Va/(r*ln)*s.y/r;return{x:s.vx,y:s.vy,vx:-E_M*(Ex+s.vy*B),vy:-E_M*(Ey-s.vx*B)};};
+          const add=(s,k,a)=>({x:s.x+a*k.x,y:s.y+a*k.y,vx:s.vx+a*k.vx,vy:s.vy+a*k.vy});
+          for(let i=0;i<10000;i++){
+            if(i%4===0)points.push([state.x,state.y]);
+            const k1=deriv(state),k2=deriv(add(state,k1,dt/2)),k3=deriv(add(state,k2,dt/2)),k4=deriv(add(state,k3,dt));
+            state.x+=dt*(k1.x+2*k2.x+2*k3.x+k4.x)/6;state.y+=dt*(k1.y+2*k2.y+2*k3.y+k4.y)/6;state.vx+=dt*(k1.vx+2*k2.vx+2*k3.vx+k4.vx)/6;state.vy+=dt*(k1.vy+2*k2.vy+2*k3.vy+k4.vy)/6;
+            const r=Math.hypot(state.x,state.y);
+            const radial=(state.x*state.vx+state.y*state.vy)/r;
+            if(r>=ra){if(atCutoff){points.push([state.x*ra/r,state.y*ra/r]);result="grazes anode at Hull cutoff";}else{points.push([state.x,state.y]);result="anode interception";}break;}
+            if(previousRadial>0&&radial<=0&&B>cutoffB){turned=true;result="turns back toward cathode";}
+            if(turned&&r<=rc){points.push([state.x,state.y]);break;}
+            if(i>10&&r<=rc){points.push([state.x,state.y]);result="returns toward cathode";break;}
+            previousRadial=radial;
+          }
+          magnetronCacheKey=key;magnetronCache={points,result,dt};return magnetronCache;
+        }
+        function magnetronRegime(p, m) {
+          const ratio=m.B/m.Bc;
+          if(Math.abs(ratio-1)<0.015)return 1;
+          return ratio<1?0:2;
+        }
+        function beamTube(c, x0, x1, y) {
+          c.strokeStyle = "#4b4e44";
+          c.lineWidth = 1.4;
+          c.beginPath();
+          c.moveTo(x0, y - 24);
+          c.lineTo(x1, y - 24);
+          c.moveTo(x0, y + 24);
+          c.lineTo(x1, y + 24);
+          c.stroke();
+          c.fillStyle = "#74786d";
+          c.fillRect(x0 - 8, y - 38, 12, 76);
+          c.fillRect(x1 - 4, y - 38, 12, 76);
+        }
+        function plate(c, x, y, name) {
+          c.fillStyle = "rgba(87,168,255,.1)";
+          c.fillRect(x - 23, y - 64, 46, 40);
+          c.fillRect(x - 23, y + 24, 46, 40);
+          c.strokeStyle = colors.blue;
+          c.lineWidth = 1.5;
+          c.strokeRect(x - 23, y - 64, 46, 40);
+          c.strokeRect(x - 23, y + 24, 46, 40);
+          label(c, name, x, y - 78, colors.blue);
+        }
+        function label(c, s, x, y, color = colors.muted) {
+          c.fillStyle = color;
+          c.font = "11px DM Mono, monospace";
+          c.textAlign = "center";
+          c.fillText(s, x, y);
+        }
+        function electron(c, x, y, r) {
+          c.save();
+          c.shadowColor = colors.amber;
+          c.shadowBlur = 9;
+          c.fillStyle = colors.amber;
+          c.beginPath();
+          c.arc(x, y, r, 0, TAU);
+          c.fill();
+          c.restore();
+        }
+        function arrow(c, x1, y1, x2, y2, color = colors.cyan, alpha = 1) {
+          c.save();
+          c.globalAlpha = alpha;
+          c.strokeStyle = color;
+          c.fillStyle = color;
+          c.lineWidth = 1.5;
+          c.beginPath();
+          c.moveTo(x1, y1);
+          c.lineTo(x2, y2);
+          c.stroke();
+          const a = Math.atan2(y2 - y1, x2 - x1);
+          c.beginPath();
+          c.moveTo(x2, y2);
+          c.lineTo(x2 - 8 * Math.cos(a - 0.45), y2 - 8 * Math.sin(a - 0.45));
+          c.lineTo(x2 - 8 * Math.cos(a + 0.45), y2 - 8 * Math.sin(a + 0.45));
+          c.closePath();
+          c.fill();
+          c.restore();
+        }
+        function wave(c, x, y, phase, len, amplitude = 13) {
+          c.save();
+          c.strokeStyle = colors.cyan;
+          c.globalAlpha = 0.75;
+          c.lineWidth = 1.5;
+          c.beginPath();
+          for (let i = 0; i <= 80; i++) {
+            const u = i / 80,
+              xx = x - len / 2 + u * len,
+              yy = y + Math.sin(u * TAU * 1.25 + phase) * amplitude;
+            i === 0 ? c.moveTo(xx, yy) : c.lineTo(xx, yy);
+          }
+          c.stroke();
+          c.restore();
+        }
+        function render() {
+          try {
+            const d = tube[mode],
+              m = d.calc(params);
+            $("#viewTitle").textContent = d.short;
+            $("#stateBadge").textContent = running ? "RUNNING" : "PAUSED";
+            ctx.clearRect(0, 0, 960, 440);
+            ctx.save();
+            d.draw(params, m, time);
+            ctx.restore();
+            lastRenderError = "";
+          } catch (error) {
+            ctx.save();
+            ctx.setTransform(cv.width / 960, 0, 0, cv.height / 440, 0, 0);
+            ctx.clearRect(0, 0, 960, 440);
+            ctx.fillStyle = "#181916";
+            ctx.fillRect(0, 0, 960, 440);
+            ctx.fillStyle = colors.red;
+            ctx.font = "600 17px Inter, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("This frame could not be drawn", 480, 205);
+            ctx.fillStyle = colors.muted;
+            ctx.font = "12px 'DM Mono', monospace";
+            ctx.fillText("Open the browser console for details.", 480, 231);
+            ctx.restore();
+            $("#stateBadge").textContent = "RENDER ERROR";
+            if (lastRenderError !== error.message) console.error(error);
+            lastRenderError = error.message;
+          }
+          requestAnimationFrame(render);
+        }
+        function tick(now) {
+          let dt = Math.min(0.05, (now - last) / 1000);
+          last = now;
+          if (running) time += dt * speed;
+          requestAnimationFrame(tick);
+        }
+        function renderInfo() {
+          const d = tube[mode],
+            m = d.calc(params);
+          $("#equations").innerHTML = d
+            .eq(params, m)
+            .map(
+              ([a, b]) =>
+                `<div class="formula-box"><div class="eq-label">${a}</div><div class="equation">${b}</div></div>`,
+            )
+            .join("");
+          $("#metrics").innerHTML = d
+            .metrics(params, m)
+            .map(
+              ([a, b]) =>
+                `<div class="metric"><span>${a}</span><b>${b}</b></div>`,
+            )
+            .join("");
+          $("#explain").textContent = d.explain;
+          $("#summaryTitle").textContent = d.name;
+          $("#summaryText").textContent = d.summary || d.explain;
+          $("#modelLimit").textContent = d.limit;
+          $("#steps").innerHTML = d.steps
+            .map(
+              (s, i) =>
+                `<div class="step"><span class="stepnum">0${i + 1}</span><p>${s}</p></div>`,
+            )
+            .join("");
+          const [st, cls] = d.status(params, m);
+          $("#operating").innerHTML = `<span class="pill ${cls}">${st}</span>`;
+        }
+        function renderSupplies() {
+          const p = params;
+          const rails = {
+            kly: [["DC · BEAM", `+${p.V0} V`], ["RF · BUNCHER", `${p.V1} Vpk · φ ${p.phase}° @ ${p.f} GHz`], ["RF · CATCHER LOAD", `${p.Rsh} kΩ · β₀ ${p.beta0}`]],
+            ref: [["DC · BEAM", `+${p.V0} V`], ["DC · REPELLER", `−${p.Vr} V`], ["RF · CAVITY GAP", `${p.V1} Vpk @ ${p.f} GHz`]],
+            mag: [["DC · ANODE", `+${p.Va} V`], ["AXIAL FIELD · B", `${p.B} mT`], ["RF · CAVITIES", `${p.Vrf} Vpk · π mode · ${p.N} cells @ ${p.f} GHz`]],
+            twt: [["DC · BEAM", `+${p.V0} V`], ["RF · INPUT", `${p.Vin} Vpk @ ${p.f} GHz`], ["DC · COLLECTOR", "beam collector · no separate bias model"]],
+          };
+          $("#supplyRail").innerHTML = (rails[mode] || []).map(([kind, value]) => {const cls=kind.includes("RF")?"rf":kind.includes("FIELD")?"field":"dc";return `<div class="supply-item"><span class="supply-kind ${cls}">${kind}</span><b>${value}</b></div>`;}).join("");
+        }
+        function build() {
+          const d = tube[mode];
+          $("#tabs").innerHTML = Object.entries(tube)
+            .map(
+              ([k, x]) =>
+                `<button class="tab ${k === mode ? "active" : ""}" data-mode="${k}"><small>${x.short.split(" · ")[0]}</small><strong>${x.name}</strong></button>`,
+            )
+            .join("");
+          document.querySelectorAll(".tab").forEach(
+            (b) =>
+              (b.onclick = () => {
+                mode = b.dataset.mode;
+                time = 0;
+                build();
+              }),
+          );
+          params = {};
+          $("#controls").innerHTML = d.controls
+            .map(
+              ([id, label, min, max, val, step, unit, effect]) =>
+                `<div class="control"><div class="control-top"><label for="p_${id}">${label}</label><span class="value" id="v_${id}">${val} ${unit}</span></div><input id="p_${id}" type="range" min="${min}" max="${max}" step="${step}" value="${val}"><div class="range-ends"><span>${min} ${unit}</span><span>${max} ${unit}</span></div><details class="param-effect"><summary>What does this do?</summary><div class="effect-row"><span class="effect-up">↑ Increase:</span> ${effect.up}</div><div class="effect-row"><span class="effect-down">↓ Decrease:</span> ${effect.down}</div></details></div>`,
+            )
+            .join("");
+          d.controls.forEach(([id, label, min, max, val, step, unit]) => {
+            params[id] = val;
+            const el = $("#p_" + id);
+            el.oninput = () => {
+              params[id] = +el.value;
+              $("#v_" + id).textContent = el.value + " " + unit;
+              renderInfo();
+              renderSupplies();
+            };
+          });
+          renderInfo();
+          renderSupplies();
+        }
+        $("#play").onclick = () => {
+          running = !running;
+          $("#play").textContent = running ? "Ⅱ Pause" : "▶ Play";
+          $("#play").setAttribute(
+            "aria-label",
+            running ? "Pause animation" : "Play animation",
+          );
+        };
+        $("#speed").oninput = (e) => {
+          speed = +e.target.value;
+          $("#speedVal").textContent = fmt(speed, 2) + "×";
+        };
+        $("#resetTime").onclick = () => { time = 0; };
+        $("#step").onclick = () => { running = false; $("#play").textContent = "▶ Play"; time += 0.12; };
+        $("#restore").onclick = () => { time = 0; build(); };
+        window.addEventListener("keydown", (e) => {
+          if (
+            e.code === "Space" &&
+            !["INPUT", "BUTTON"].includes(document.activeElement.tagName)
+          ) {
+            e.preventDefault();
+            $("#play").click();
+          }
+        });
+        build();
+        requestAnimationFrame(resize);
+        requestAnimationFrame(render);
+        requestAnimationFrame(tick);
+      })();
+    </script>
+  </body>
+</html>
